@@ -1,154 +1,121 @@
-import fitz
-import camelot
-from pathlib import Path
-from sentence_transformers import SentenceTransformer
-import faiss
-from PIL import Image
-from transformers import (
-    BlipProcessor,
-    BlipForConditionalGeneration,
-    AutoTokenizer,
-    AutoModelForCausalLM
-)
-import torch
 import os
+
+# ---------------- CRITICAL FIX (Docling CPU only) ----------------
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["NCCL_P2P_DISABLE"] = "1"
+os.environ["NCCL_IB_DISABLE"] = "1"
+# ---------------------------------------------------------------
+
+import torch
+import faiss
 import gc
+from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from docling.document_converter import DocumentConverter
 
 
-class MultimodalGraniteRAG:
+class GraniteDoclingRAG:
     def __init__(
         self,
         pdf_path,
-        image_dir="images",
-        k_retrieve=3,
+        k_retrieve=4,
         granite_model="ibm-granite/granite-3.0-8b-instruct"
     ):
         self.pdf_path = pdf_path
-        self.image_dir = Path(image_dir)
-        self.image_dir.mkdir(exist_ok=True)
         self.k_retrieve = k_retrieve
 
         # ---------------- Device & dtype ----------------
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        if self.device == "cuda" and torch.cuda.is_bf16_supported():
-            self.llm_dtype = torch.bfloat16
-        elif self.device == "cuda":
-            self.llm_dtype = torch.float16
+        if self.device == "cuda":
+            if torch.cuda.is_bf16_supported():
+                self.dtype = torch.bfloat16
+                print("[INFO] Using bfloat16")
+            else:
+                self.dtype = torch.float16
+                print("[INFO] bfloat16 not supported, falling back to float16")
         else:
-            self.llm_dtype = torch.float32
+            self.dtype = torch.float32
+            print("[INFO] Using float32 (CPU)")
 
-        # ---------------- LLM (Granite) ----------------
-        self.llm_tokenizer = AutoTokenizer.from_pretrained(granite_model)
+        # ---------------- Granite LLM ----------------
+        self.tokenizer = AutoTokenizer.from_pretrained(granite_model)
 
-        self.llm_model = AutoModelForCausalLM.from_pretrained(
+        self.model = AutoModelForCausalLM.from_pretrained(
             granite_model,
-            torch_dtype=self.llm_dtype,
+            torch_dtype=self.dtype,
             device_map="auto" if self.device == "cuda" else None
         )
 
-        # ---------------- BLIP (CPU ONLY) ----------------
-        self.processor = BlipProcessor.from_pretrained(
-            "Salesforce/blip-image-captioning-base"
-        )
-        self.caption_model = BlipForConditionalGeneration.from_pretrained(
-            "Salesforce/blip-image-captioning-base",
-            torch_dtype=torch.float32
-        ).to("cpu")
-
         # ---------------- Embeddings (CPU) ----------------
-        self.embed_model = SentenceTransformer(
+        self.embedder = SentenceTransformer(
             "all-MiniLM-L6-v2",
             device="cpu"
         )
 
+        # ---------------- Docling (CPU ONLY) ----------------
+        self.converter = DocumentConverter()
+
         # ---------------- Build index ----------------
-        self.chunks = self.build_multimodal_chunks()
+        self.chunks = self.build_chunks()
         self.build_index()
 
-    # ---------------- Text ----------------
-    def extract_text(self):
-        doc = fitz.open(self.pdf_path)
-        return "\n".join(page.get_text() for page in doc)
+    # ---------------- Docling Extraction ----------------
+    def build_chunks(self):
+        result = self.converter.convert(self.pdf_path)
+        doc = result.document
 
-    # ---------------- Tables ----------------
-    def extract_tables(self):
-        tables = camelot.read_pdf(self.pdf_path, pages="all")
-        return [t.df.to_string(index=False) for t in tables]
-
-    # ---------------- Images ----------------
-    def extract_images(self):
-        doc = fitz.open(self.pdf_path)
-        image_paths = []
-
-        for page_num, page in enumerate(doc):
-            for img_index, img in enumerate(page.get_images(full=True)):
-                xref = img[0]
-                base = doc.extract_image(xref)
-                path = self.image_dir / f"page{page_num}_img{img_index}.{base['ext']}"
-                with open(path, "wb") as f:
-                    f.write(base["image"])
-                image_paths.append(str(path))
-
-        return image_paths
-
-    def caption_image(self, image_path):
-        image = Image.open(image_path).convert("RGB")
-        inputs = self.processor(image, return_tensors="pt")
-        with torch.no_grad():
-            out = self.caption_model.generate(**inputs)
-        return self.processor.decode(out[0], skip_special_tokens=True)
-
-    # ---------------- Chunks ----------------
-    def build_multimodal_chunks(self):
         chunks = []
 
-        chunks.append({
-            "text": self.extract_text(),
-            "type": "text",
-            "source": self.pdf_path
-        })
+        for block in doc.text_blocks:
+            if block.text.strip():
+                chunks.append({
+                    "text": block.text,
+                    "type": "text",
+                    "source": f"page_{block.page_no}"
+                })
 
-        for i, table in enumerate(self.extract_tables()):
+        for i, table in enumerate(doc.tables):
             chunks.append({
-                "text": table,
+                "text": table.to_pandas().to_string(index=False),
                 "type": "table",
-                "source": f"{self.pdf_path}_table_{i}"
+                "source": f"table_{i}_page_{table.page_no}"
             })
 
-        for img in self.extract_images():
-            caption = self.caption_image(img)
+        for i, fig in enumerate(doc.figures):
+            caption = fig.caption or "Figure without caption"
             chunks.append({
                 "text": caption,
-                "type": "image",
-                "source": img
+                "type": "figure",
+                "source": f"figure_{i}_page_{fig.page_no}"
             })
 
+        print(f"[INFO] Extracted {len(chunks)} chunks")
         return chunks
 
     # ---------------- FAISS ----------------
     def build_index(self):
         texts = [c["text"] for c in self.chunks]
-        embeddings = self.embed_model.encode(texts, convert_to_numpy=True)
-
+        embeddings = self.embedder.encode(texts, convert_to_numpy=True)
         self.index = faiss.IndexFlatL2(embeddings.shape[1])
         self.index.add(embeddings)
 
     def retrieve(self, query):
-        q_emb = self.embed_model.encode([query], convert_to_numpy=True)
-        _, idx = self.index.search(q_emb, self.k_retrieve)
+        q = self.embedder.encode([query], convert_to_numpy=True)
+        _, idx = self.index.search(q, self.k_retrieve)
         return [self.chunks[i] for i in idx[0]]
 
-    # ---------------- Generation ----------------
-    def generate_answer(self, query):
+    # ---------------- Granite Generation (bf16 safe) ----------------
+    def answer(self, query):
         docs = self.retrieve(query)
 
-        context = "\n".join(
-            f"[{d['type'].upper()} from {d['source']}]\n{d['text']}"
+        context = "\n\n".join(
+            f"[{d['type'].upper()} | {d['source']}]\n{d['text']}"
             for d in docs
         )
 
-        prompt = f"""Use the context below to answer the question.
+        prompt = f"""
+Use the context below to answer the question.
 If the answer is not in the context, say "I don't know".
 
 Context:
@@ -160,27 +127,39 @@ Question:
 Answer:
 """
 
-        inputs = self.llm_tokenizer(prompt, return_tensors="pt").to(self.device)
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
 
         with torch.no_grad():
-            output = self.llm_model.generate(
-                **inputs,
-                max_new_tokens=256,
-                do_sample=False,
-                temperature=0.2
-            )
+            if self.device == "cuda" and self.dtype == torch.bfloat16:
+                with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                    output = self.model.generate(
+                        **inputs,
+                        max_new_tokens=300,
+                        do_sample=False,
+                        temperature=0.2
+                    )
+            else:
+                output = self.model.generate(
+                    **inputs,
+                    max_new_tokens=300,
+                    do_sample=False,
+                    temperature=0.2
+                )
 
-        return self.llm_tokenizer.decode(output[0], skip_special_tokens=True)
+        return self.tokenizer.decode(output[0], skip_special_tokens=True)
 
-    # ---------------- CLEANUP ----------------
+    # ---------------- Cleanup ----------------
     def cleanup(self):
-        """Free GPU and CPU memory safely"""
-        del self.llm_model
-        del self.caption_model
+        del self.model
         gc.collect()
 
-        if torch.cuda.is_available():
+        if self.device == "cuda":
             torch.cuda.empty_cache()
             torch.cuda.ipc_collect()
 
 
+# ---------------- Run ----------------
+if __name__ == "__main__":
+    rag = GraniteDoclingRAG("/kaggle/input/sampledataset/sample.pdf")
+    print(rag.answer("Summarize the key findings including tables and figures."))
+    rag.cleanup()

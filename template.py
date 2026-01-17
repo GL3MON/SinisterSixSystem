@@ -4,7 +4,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s: %(message)s]')
 
-project_name = "FinConnectChatbot"
+project_name = "SinisterSixSystems"
 
 files = [
     f"src/{project_name}/__init__.py",

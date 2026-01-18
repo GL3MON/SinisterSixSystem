@@ -82,7 +82,7 @@ class Orchestrator:
         initial_state = {
             "transcript": [],
             "mode": mode,
-            "markdown_document": ""
+            "markdown_document":  open(os.path.join("./artifacts/markdown/", os.listdir("./artifacts/markdown/")[0]), "r").read()
         }
 
         for output in audio_agent.generate_audio(initial_state):

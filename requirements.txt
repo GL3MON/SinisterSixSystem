@@ -63,5 +63,16 @@ websockets==15.0.1
 xxhash==3.6.0
 yarl==1.22.0
 zstandard==0.25.0
+torch>=2.1.0
+transformers>=4.40.0
+accelerate>=0.27.0
+sentence-transformers>=2.2.2
+faiss-cpu>=1.7.4
+PyMuPDF>=1.23.0
+camelot-py[cv]>=0.11.0
+Pillow>=10.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+pocket-tts
 
 -e .

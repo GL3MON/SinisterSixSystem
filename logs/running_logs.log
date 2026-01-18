@@ -610,3 +610,165 @@
 [2026-01-18 04:12:39,968: INFO: tts_model: Average generation step time: 20 ms]
 [2026-01-18 04:12:39,968: INFO: utils: Waiting for mimi decoder to finish took 0 ms]
 [2026-01-18 04:12:39,968: INFO: tts_model: Generated: 4480 ms of audio in 1240 ms so 3.61x faster than real-time]
+[2026-01-18 10:08:48,852: ERROR: graph_generator: Error compiling workflow: Expected a Runnable, callable or dict.Instead got an unsupported type: <class 'str'>]
+[2026-01-18 10:13:41,533: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:13:42,011: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 403 Forbidden"]
+[2026-01-18 10:16:09,882: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:16:15,628: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:16:15,631: ERROR: graph_generator: Error generating code: 'str' object has no attribute 'content']
+[2026-01-18 10:17:43,120: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:17:49,546: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:17:49,551: ERROR: graph_generator: Error generating code: module 'ast' has no attribute 'Exec']
+[2026-01-18 10:19:47,761: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:19:53,427: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:19:53,430: ERROR: graph_generator: Error generating code: Malicious code detected!]
+[2026-01-18 10:19:53,433: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:19:58,502: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:19:58,505: ERROR: graph_generator: Error fixing code: Malicious code detected!]
+[2026-01-18 10:19:58,507: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:20:04,477: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:20:04,481: ERROR: graph_generator: Error generating code: Malicious code detected!]
+[2026-01-18 10:20:04,482: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:20:36,826: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:20:42,129: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:20:42,133: ERROR: graph_generator: Error generating code: Malicious code detected!]
+[2026-01-18 10:20:42,136: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:21:32,368: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:21:37,330: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:21:37,334: ERROR: graph_generator: Malicious code detected: import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+# Create the directory if it doesn't exist
+output_dir = './artifacts/graphs'
+os.makedirs(output_dir, exist_ok=True)
+
+# Define the x-range for the plot
+x = np.linspace(0, 12, 400)
+
+# Define the equations of the lines
+# Line 1: x + y = 10  =>  y = 10 - x
+y1 = 10 - x
+
+# Line 2: x - y = 2   =>  y = x - 2
+y2 = x - 2
+
+# Find the intersection point
+# x + y = 10
+# x - y = 2
+# Adding the two equations: 2x = 12 => x = 6
+# Substituting x = 6 into x + y = 10: 6 + y = 10 => y = 4
+intersection_x = 6
+intersection_y = 4
+
+# Create the plot
+plt.figure(figsize=(10, 7))
+
+# Plot the first line
+plt.plot(x, y1, label='x + y = 10', color='blue', linewidth=2)
+
+# Plot the second line
+plt.plot(x, y2, label='x - y = 2', color='red', linewidth=2)
+
+# Plot the intersection point
+plt.plot(intersection_x, intersection_y, 'o', color='green', markersize=8, label=f'Intersection ({intersection_x}, {intersection_y})')
+plt.text(intersection_x + 0.3, intersection_y + 0.3, f'({intersection_x}, {intersection_y})', color='green', fontsize=10)
+
+
+# Add labels and title
+plt.xlabel('X-axis', fontsize=12)
+plt.ylabel('Y-axis', fontsize=12)
+plt.title('Intersection of Two Lines: x+y=10 and x-y=2', fontsize=14)
+
+# Add a legend
+plt.legend(fontsize=10)
+
+# Add a grid for better readability
+plt.grid(True, linestyle='--', alpha=0.7)
+
+# Set appropriate x and y limits to ensure the intersection is clearly visible
+# and the graph is not too clustered.
+plt.xlim(0, 12)
+plt.ylim(0, 10)
+
+# Add arrows to the axes
+plt.axvline(0, color='black', linewidth=0.8)
+plt.axhline(0, color='black', linewidth=0.8)
+
+# Ensure a tight layout
+plt.tight_layout()
+
+# Save the graph
+graph_filename = os.path.join(output_dir, 'query_instructions_1.png')
+plt.savefig(graph_filename)
+
+# Close the plot to free up memory
+plt.close()]
+[2026-01-18 10:21:37,334: ERROR: graph_generator: Error generating code: Malicious code detected!]
+[2026-01-18 10:21:37,336: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:21:43,095: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:21:43,098: ERROR: graph_generator: Malicious code detected: import matplotlib.pyplot as plt
+import os
+import numpy as np
+
+# Ensure the output directory exists
+output_dir = './artifacts/graphs'
+os.makedirs(output_dir, exist_ok=True)
+
+# Define the graph filename according to the specified format
+# Assuming a placeholder number '1' as no specific number was provided in the faulty code.
+graph_filename = 'query/instructions_1.png'
+output_path = os.path.join(output_dir, graph_filename)
+
+# --- Start of graph generation logic ---
+# This is a placeholder for actual graph generation.
+# Replace this with your specific data and plotting code.
+
+# Example: Generate some sample data
+x = np.linspace(0, 10, 100)
+y = np.sin(x) + np.random.normal(0, 0.1, 100)
+
+# Create a figure and an axes
+plt.figure(figsize=(10, 6))
+
+# Plot the data
+plt.plot(x, y, label='Sample Data')
+
+# Add titles and labels
+plt.title('Sample Graph: Sine Wave with Noise')
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.legend()
+plt.grid(True)
+
+# --- End of graph generation logic ---
+
+# Save the plot to the specified path
+plt.savefig(output_path)
+
+# Close the plot to free up memory
+plt.close()
+
+# print(f"Graph saved successfully to {output_path}") # Optional: for debugging/confirmation]
+[2026-01-18 10:21:43,099: ERROR: graph_generator: Error fixing code: Malicious code detected!]
+[2026-01-18 10:21:43,102: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:22:24,647: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:22:31,980: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:22:32,042: ERROR: graph_generator: Python code execution failed: Traceback (most recent call last):
+  File "/tmp/tmp0eacbq6j.py", line 1, in <module>
+    import matplotlib.pyplot as plt
+ModuleNotFoundError: No module named 'matplotlib'
+]
+[2026-01-18 10:22:32,043: ERROR: graph_generator: Error generating code: Code execution failed:
+Traceback (most recent call last):
+  File "/tmp/tmp0eacbq6j.py", line 1, in <module>
+    import matplotlib.pyplot as plt
+ModuleNotFoundError: No module named 'matplotlib'
+]
+[2026-01-18 10:22:32,045: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:25:56,396: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:26:01,835: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:30:00,409: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:30:14,982: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]
+[2026-01-18 10:36:18,578: INFO: models: AFC is enabled with max remote calls: 10.]
+[2026-01-18 10:36:34,014: INFO: _client: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"]

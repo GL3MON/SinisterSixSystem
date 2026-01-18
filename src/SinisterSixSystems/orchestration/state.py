@@ -2,18 +2,11 @@ from typing import TypedDict, List, Annotated
 import operator
 
 class AgentState(TypedDict):
-    # Core inputs
     user_input: str
-    file_path: str  # For Type 3: PDF uploads
-    
-    # Routing Decisions
-    route_type: str  # "type_1", "type_2", or "type_3"
-    required_outputs: List[str]  # ["text", "audio", "video", "diagram"]
-    
-    # Generated Content
-    text_content: str
-    media_assets: dict  # Paths to generated images, audio, etc.
-    
-    # Meta
+    route_type: str
+    required_outputs: List[str]
+    text_content: str      # Holds the LaTeX code
+    markdown_content: str  # NEW: Holds the website-ready text
+    media_assets: dict
     language: str
     difficulty: str

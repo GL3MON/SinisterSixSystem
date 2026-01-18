@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: SinisterSixSystems
+Version: 0.0.0
+Summary: SSS
+Home-page: https://github.com/GL3MON/SinisterSixSystems
+Author: GL3MON
+Author-email: harisshragavarchives@gmail.com
+Project-URL: Bug Tracker, https://github.com/GL3MON/SinisterSixSystems/issues
+Description-Content-Type: text/markdown
+Dynamic: author
+Dynamic: author-email
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: project-url
+Dynamic: summary
+
+# SinisterSixSystem

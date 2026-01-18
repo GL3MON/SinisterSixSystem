@@ -73,3 +73,12 @@ Markdown Document:
 {markdown_document}
     
 """
+
+ORCHESTRATOR_PROMPT = """
+You are an orchestrator agent. You will be given a series of messages and you will have to determine the next steps to take based on the messages.
+You have access to various tools and components that you can use to process the messages and generate a response.
+You are just to call other agents.
+
+User Messages:
+{messages}
+"""

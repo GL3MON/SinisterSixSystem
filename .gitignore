@@ -4,4 +4,9 @@ __pycache__/
 *.pyc
 *.egg-info/
 .env
+<<<<<<< HEAD
 .env.local
+=======
+.env.local
+test.py
+>>>>>>> 9ef79cdd38455827e3f5c24b05b32e4853494d36

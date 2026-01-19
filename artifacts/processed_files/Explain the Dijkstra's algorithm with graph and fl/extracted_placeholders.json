@@ -1,0 +1,12 @@
+[
+    {
+        "type": "graph",
+        "idx": 0,
+        "description": "A graph illustrating Dijkstra's algorithm with nodes (A, B, C, D, E) and weighted edges. Node A is the source. Edges and weights: A-B (4), A-C (2), B-E (3), C-D (2), C-B (1), D-E (3). The graph should visually represent these connections and weights."
+    },
+    {
+        "type": "mermaid",
+        "idx": 1,
+        "description": "A flowchart for Dijkstra's algorithm.\nStart node.\nInitialize distances (source=0, others=infinity) and visited set (all false).\nCreate a priority queue and add (source, 0).\nLoop while priority queue is not empty.\n  Extract node U with minimum distance from priority queue.\n  Decision: Is U already visited?\n    If Yes: Continue to next iteration of loop.\n    If No:\n      Mark U as visited.\n      For each neighbor V of U:\n        Decision: Is V not visited?\n          If Yes:\n            Calculate new_distance = distance[U] + weight(U, V).\n            Decision: Is new_distance < distance[V]?\n              If Yes:\n                Update distance[V] = new_distance.\n                Add (V, distance[V]) to priority queue.\n              If No: Do nothing.\n          If No: Do nothing.\nEnd loop.\nEnd node."
+    }
+]

@@ -1,0 +1,42 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Map of British India showing territories under East India Company control by 1857"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Painting depicting scenes from the 1857 Revolt"
+    },
+    {
+        "type": "graph",
+        "idx": 2,
+        "description": "Line graph showing the growth of Indian National Congress membership from 1885 to 1947, highlighting key periods of expansion during major movements."
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "Portrait of Mahatma Gandhi"
+    },
+    {
+        "type": "mermaid",
+        "idx": 4,
+        "description": "Flowchart illustrating the key actions and phases of the Non-Cooperation Movement, including boycotts, resignations, and its eventual withdrawal."
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "Photograph of Mahatma Gandhi leading the Dandi March"
+    },
+    {
+        "type": "graph",
+        "idx": 6,
+        "description": "Bar chart showing the number of communal violence incidents and casualties in India from 1946 to 1947, illustrating the escalating tensions before partition."
+    },
+    {
+        "type": "image",
+        "idx": 7,
+        "description": "Historic photograph of Jawaharlal Nehru delivering his 'Tryst with Destiny' speech"
+    }
+]

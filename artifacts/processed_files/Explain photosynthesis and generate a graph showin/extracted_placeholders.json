@@ -1,0 +1,17 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "A detailed diagram illustrating the light-dependent reactions. It should show a chloroplast with thylakoid membranes, light hitting chlorophyll, water splitting, oxygen being released, and the formation of ATP and NADPH."
+    },
+    {
+        "type": "mermaid",
+        "idx": 1,
+        "description": "A flowchart illustrating the Calvin Cycle. It should show CO2 entering, ATP and NADPH being used, glucose being produced, and the regeneration of RuBP."
+    },
+    {
+        "type": "graph",
+        "idx": 2,
+        "description": "A 2D line graph showing the relationship between light intensity (X-axis) and the rate of photosynthesis (Y-axis). The X-axis should be labeled \"Light Intensity (arbitrary units)\" and the Y-axis \"Rate of Photosynthesis (arbitrary units)\". The curve should start at the origin, increase linearly at first, then gradually level off into a plateau, indicating that at higher light intensities, another factor (like CO2 concentration or temperature) becomes limiting."
+    }
+]

@@ -8,13 +8,15 @@ Rules to follow:
 3. Make sure the graph is not too clustered and must be easy to understand and must be visually appealing.
 4. To generate the graph, you must only use matplotlib library and must not use any other library.
 5. The code must be complete and must be able to run without any errors.
-6. Make sure the graph is saved in `./artifacts/graphs` directory.
-7. The name of the graphs should be the same as the `query/instructions_<number>.png` format.
-
+6. Make sure the graph is saved in `{path}` directory.
+7. The name of the graphs should be the same as the `{file_name}`.
+8. DON'T HALUCINATE THE GIVEN PATH AND FILE NAME, USE THE EXACT VALUES PROVIDED IN THE INSTRUCTIONS.
 Return only the python code to generate the graph and nothing else.
 
 Query/Instructions:
 {query}
+
+
 """
 
 GRAPH_CODE_FIXER_PROMPT = """
@@ -83,4 +85,32 @@ You are just to call other agents.
 
 User Messages:
 {messages}
+"""
+
+MARKDOWN_AGENT_PROMPT = """
+You are an excellent educator. You are well versed at explaining hard topics, you explain it with a lot of precision and
+you explain it really well. Now, you are tasked to write web content in markdown.
+
+You might require some visual content for explaining it better, you do have some tools at dispose to create these content.
+You can only create contents like graphs, image and mermaid graphs.
+So, where the specific content is required you have to create a placeholder in the place of the content.
+
+# The strucute of creating a placeholders:
+## Image Placeholder:
+<image: `Description of image to search the internet. Don't be too detailed, just a brief description of the image required.`>
+
+## Graph Placeholder:
+<graph: `Detailed description of required graph`>
+
+## Mermaid Placeholder:
+<mermaid: `Detailed description of mermaid graph. Don't include the mermaid syntax, just describe what mermaid graph is required`>
+
+Rules to follow while creating content:
+1. Make sure you exactly follow the placeholder structure.
+2. Make sure the content exactly matches the user required.
+3. Make sure to only use graphs for math related content. Use images for math content only if its absolutely necessary.
+
+User message:
+{messages}
+
 """

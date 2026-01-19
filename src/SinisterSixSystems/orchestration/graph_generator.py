@@ -3,12 +3,7 @@ from SinisterSixSystems.constants import GRAPH_GENERATION_PROMPT, GRAPH_CODE_FIX
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
-<<<<<<< HEAD
-from langgraph.graph import START, END, StateGraph, MessagesState
-=======
 from langgraph.graph import START, END, StateGraph
->>>>>>> 9ef79cdd38455827e3f5c24b05b32e4853494d36
-
 
 from typing import Dict, Any, List, Annotated, Union
 from typing_extensions import TypedDict
@@ -29,9 +24,11 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 class GraphGeneratorState(TypedDict):
     extracted_code: str
+    graph_id: str
     retry_count: int
     error_message: str
     query: str
+    path: str
 
 
 class GraphGenerator:
@@ -41,6 +38,8 @@ class GraphGenerator:
         
         self.state = {
             "extracted_code": "",
+            "path": "./artifacts/graphs",
+            "graph_id": "",
             "error_message": "",
             "retry_count": 0,
             "query": ""
@@ -104,10 +103,17 @@ class GraphGenerator:
                     pass
     
     def generate_code(self, state: GraphGeneratorState):
-        prompt_template = PromptTemplate(input_variables=["query"], template=GRAPH_GENERATION_PROMPT)
+        prompt_template = PromptTemplate(input_variables=["query","file_name","path"], template=GRAPH_GENERATION_PROMPT)
+
+        file_name = f"graph_{state.get('graph_id', 'default')}.png"
 
         graph_generator_chain = prompt_template | self.model | self.output_parser
-        response = graph_generator_chain.invoke({"query": state.get("query", "")})
+        logger.warning({
+            "query": state.get("query", ""),
+            "file_name": file_name,
+            "path": state.get("path", "./artifacts/graphs")
+        })
+        response = graph_generator_chain.invoke({"query": state.get("query", ""), "file_name": file_name, "path": state.get("path", "./artifacts/graphs")})
 
         try:
             # StrOutputParser returns a string directly, not an object with .content

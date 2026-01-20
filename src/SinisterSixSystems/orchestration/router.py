@@ -11,7 +11,7 @@ class RouteSchema(BaseModel):
     route_type: str = Field(description="One of: 'type_1', 'type_2', 'type_3'")
     required_outputs: List[str] = Field(description="List of formats: text, audio, image, video, diagram")
 
-def router_node(state):
+def wrouter_node(state):
     # Initialize the high-performance Gemini 2.5 Flash
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash", 

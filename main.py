@@ -5,16 +5,27 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from SinisterSixSystems.logging import logger
 
+from langgraph.graph import StateGraph, START, END
+from src.SinisterSixSystems.orchestration.state import AgentState
+
+import os
+import re
+
 
 app = FastAPI(title="SinisterSix")
 
 orchestrator = Orchestrator()
 orchestrator_workflow = orchestrator.compile()
 
+
 @app.post("/chat")
 def chat(req: ChatRequest):
     try:
         logger.info(f"Received chat request: {req}")
+        
+        
+
+
         if req.document != "":
             logger.info("Using provided document for context.")
             response = orchestrator_workflow.invoke({"messages": [HumanMessage(content=req.query)], "document": req.document})
@@ -30,7 +41,10 @@ def chat(req: ChatRequest):
 
 @app.get("/latex_document/")
 def get_latex_document(request: ChatRequest):
-    return {"message": "This endpoint will return the LaTeX document."}
+    query = request.query
+
+
+
 
 @app.get("/")
 def root():

@@ -3,17 +3,21 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import START, END, StateGraph
+from langchain.agents import create_agent
 from langchain.tools import tool
+
 
 from SinisterSixSystems.orchestration.graph_generator import GraphGenerator
 from SinisterSixSystems.orchestration.audio_agent import AudioAgent
-from SinisterSixSystems.constants import ORCHESTRATOR_PROMPT, MARKDOWN_AGENT_PROMPT
+from SinisterSixSystems.constants import ORCHESTRATOR_PROMPT, MARKDOWN_AGENT_PROMPT, RAG_AGENT_PROMPT
+from SinisterSixSystems.components.rag import RAG
 
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from langchain_core.messages import ToolMessage
 
 from dotenv import load_dotenv
 from typing import TypedDict, List
+from functools import partial
 from PIL import Image
 import mimetypes
 import io
@@ -29,6 +33,8 @@ GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
 class OrchestratorState(TypedDict):
     messages: list
     markdown_document: str
+    document: str
+    summarized_rag_content: str
 
 
 class Orchestrator:
@@ -40,6 +46,8 @@ class Orchestrator:
             self.graph_tool,
             self.audio_generation_tool
         ]
+
+        self.retrieval_system = RAG()
 
         self.model_with_tools = self.model.bind_tools(self.tools)
     
@@ -75,7 +83,7 @@ class Orchestrator:
         logger.info(f"Graph Tool Output: {value}")
 
         return "Graph generation completed."
-
+    
     
     @staticmethod
     def image_generation_tool(description: str, query: str, placeholder_idx: int) -> str:
@@ -134,7 +142,7 @@ class Orchestrator:
 
                     try:
                         img = Image.open(io.BytesIO(img_bytes))
-                        img.verify()  # Check for corruption
+                        img.verify()
                         os.makedirs(os.path.join(ROOT_DIR, "images"), exist_ok=True)
                         ext = mimetypes.guess_extension(content_type) or ".jpg"
                         final_filename = os.path.join(os.path.join(ROOT_DIR, "images"), f"image_{placeholder_idx}{ext}")
@@ -185,13 +193,13 @@ class Orchestrator:
 
 
     def orchestrate(self, state: OrchestratorState) -> OrchestratorState:
-        prompt_template = PromptTemplate(input_variables=["messages"], template=ORCHESTRATOR_PROMPT)
+        prompt_template = PromptTemplate(input_variables=["messages", "document"], template=ORCHESTRATOR_PROMPT)
         orchestrator_chain = prompt_template | self.model_with_tools
-        response = orchestrator_chain.invoke({"messages": state.get("messages", [])})
+        response = orchestrator_chain.invoke({"messages": state.get("messages", []), "document": state.get("summarized_rag_content", "")})
 
         logger.info(f"Orchestrator Response: {response}")
         return {
-            "messages": state.get("messages", []) + [response]
+            "messages": state.get("messages", []) + [response],
         }
     
     def process_markdown_files(self, unprocessed_markdown: str, query: str) -> str:
@@ -240,14 +248,11 @@ class Orchestrator:
                 self.image_generation_tool(placeholder["description"], query, placeholder['idx'])
             
         return processed_markdown
-
-        
-
-        
+    
     def process_placeholder(self, state: OrchestratorState) -> OrchestratorState:
-        prompt_template = PromptTemplate(input_variables=["messages"], template=MARKDOWN_AGENT_PROMPT)
+        prompt_template = PromptTemplate(input_variables=["messages", "document"], template=MARKDOWN_AGENT_PROMPT)
         orchestrator = prompt_template | self.model
-        response = orchestrator.invoke({"messages": state.get("messages", [])})
+        response = orchestrator.invoke({"messages": state.get("messages", []), "document": state.get("summarized_rag_content", "")})
 
         markdown_document = response.content.replace("```markdown", "").replace("```", "").strip()
         
@@ -260,16 +265,84 @@ class Orchestrator:
             "messages": state.get("messages", []) + [response],
             "markdown_document": markdown_document,
         }
+    
+    def start(self, state: OrchestratorState) -> OrchestratorState:
+        return state
+    
+    def rag(self, state: OrchestratorState) -> OrchestratorState:
+        prompt_template = PromptTemplate(input_variables=["query"], template=RAG_AGENT_PROMPT)
+        filename = state["document"]
+
+        from langchain.tools import tool
+
+        @tool
+        def rag_tool(query: str):
+            """
+            This RAG tool retrieves relevant documents for answering a user query.
+
+            Args:
+                query (str): User query
+
+            Returns:
+                list[str]: Retrieved document contents
+            """
+
+            docs = self.retrieval_system.retrieve_documents(
+                query=query,
+                filename=filename
+            )
+
+            if hasattr(docs[0], "page_content"):
+                return [doc.page_content for doc in docs]
+
+            return docs
+
+
+        rag_tools = [
+            rag_tool
+        ]
+
+        rag_agent = create_agent(
+            model=self.model,
+            tools=rag_tools,
+            system_prompt=prompt_template
+        )
+
+        summarized_document = rag_agent.invoke({"query": state["messages"][0].content})
+        logger.info(f"RAG Agent Summarized Document: {summarized_document[:100]}")
+
+        return {
+            "messages": state.get("messages", []),
+            "document": filename,
+            "summarized_rag_content": summarized_document
+        }
+    
+    def should_do_rag(self, state: OrchestratorState) -> bool:
+        if state.get("document", "") == "":
+            return "orchestrate"
+        return "rag"
 
     def compile(self):
         workflow = StateGraph(OrchestratorState)
 
+        workflow.add_node("start", self.start)
         workflow.add_node("orchestrate", self.orchestrate)
         workflow.add_node("tool_invocation", self.tool_invocation)
+        workflow.add_node("rag", self.rag)
         workflow.add_node("process_placeholder", self.process_placeholder)
+        
+        workflow.add_edge(START, "start")
 
-        workflow.add_edge(START, "orchestrate")
-        workflow.add_edge("orchestrate", "process_placeholder")
+        workflow.add_conditional_edges(
+            "start",
+            self.should_do_rag,
+            {
+                "orchestrate": "process_placeholder",
+                "rag": "rag"
+            }
+        )
+
+        workflow.add_edge("rag", "process_placeholder")
         # workflow.add_conditional_edges(
         #     "orchestrate",
         #     lambda state: (
@@ -323,8 +396,9 @@ if __name__ == "__main__":
 
     initial_state = {
             "messages": [
-                HumanMessage(content="Explain the independence struggle of India with relevant graphs and images."),
-            ]
+                HumanMessage(content="Explain photosynthesis in detail."),
+            ],
+            "document": "/mnt/2028B41628B3E944/Projects/SinisterSixSystem/artifacts/test_pdfs/Lesson-11.pdf",
     }
 
     for output in compiled_workflow.stream(initial_state):

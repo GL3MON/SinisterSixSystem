@@ -1,0 +1,32 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "An iconic image of an atomic bomb casing, like \"Little Boy\" or \"Fat Man\""
+    },
+    {
+        "type": "mermaid",
+        "idx": 1,
+        "description": "A sequence diagram illustrating nuclear fission. A neutron strikes a large nucleus (e.g., Uranium-235). The nucleus splits into two smaller nuclei (fission products), releasing energy and 2-3 new neutrons."
+    },
+    {
+        "type": "graph",
+        "idx": 2,
+        "description": "A line graph showing the exponential increase in the number of neutrons over time (or generations) in an uncontrolled nuclear chain reaction. The x-axis represents \"Time/Generations\" and the y-axis represents \"Number of Neutrons\". The line should start low and rise steeply."
+    },
+    {
+        "type": "mermaid",
+        "idx": 3,
+        "description": "A sequence diagram showing the gun-type atomic bomb mechanism. A conventional explosive propels a \"projectile\" sub-critical mass of Uranium-235 down a barrel to impact a \"target\" sub-critical mass of Uranium-235, forming a super-critical mass and initiating fission."
+    },
+    {
+        "type": "mermaid",
+        "idx": 4,
+        "description": "A sequence diagram showing the implosion-type atomic bomb mechanism. A spherical core of Plutonium-239 is surrounded by precisely shaped conventional explosives. These explosives detonate simultaneously, creating an inward-directed shockwave that compresses the Plutonium core to a super-critical density, initiating fission."
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "A classic image of a mushroom cloud rising after a nuclear detonation, symbolizing the destructive power."
+    }
+]

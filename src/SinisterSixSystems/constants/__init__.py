@@ -97,7 +97,7 @@ So, where the specific content is required you have to create a placeholder in t
 
 # The strucute of creating a placeholders:
 ## Image Placeholder:
-<image: `Description of image to search the internet. Don't be too detailed, just a brief description of the image required.`>
+<image: `Detailed description of image to search the internet. Don't make it too long.`>
 
 ## Graph Placeholder:
 <graph: `Detailed description of required graph`>
@@ -113,4 +113,16 @@ Rules to follow while creating content:
 User message:
 {messages}
 
+User document:
+{document}
+
+"""
+
+RAG_AGENT_PROMPT = """
+You are an excellent research agent. You will be given a user query and you will have to research the query using the RAG system.
+You have access to a RAG system that you can use to research the query and find relevant information.
+You have to extract all relevant information from the RAG system and provide a concise summary of the information found.
+
+User Query:
+{query}
 """

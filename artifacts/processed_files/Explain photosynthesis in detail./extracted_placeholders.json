@@ -1,0 +1,22 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Diagram showing a plant taking in sunlight, water, and carbon dioxide, and releasing oxygen and producing sugar."
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Detailed diagram of a chloroplast showing its internal structures: outer membrane, inner membrane, stroma, thylakoids, and grana."
+    },
+    {
+        "type": "mermaid",
+        "idx": 2,
+        "description": "Flowchart showing the light-dependent reactions. Start with light hitting photosystem II, water splitting, electron transport chain, proton gradient, ATP synthase producing ATP, photosystem I, and finally NADP+ reductase producing NADPH. Show oxygen as a byproduct."
+    },
+    {
+        "type": "mermaid",
+        "idx": 3,
+        "description": "Flowchart showing the Calvin Cycle. Start with Carbon Fixation (CO2 + RuBP via RuBisCO -"
+    }
+]

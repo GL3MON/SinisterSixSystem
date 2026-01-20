@@ -2,7 +2,8 @@
 
 The atomic bomb stands as one of humanity's most profound and destructive inventions, a testament to our understanding and manipulation of the fundamental forces of nature. At its core, this weapon harnesses the immense energy locked within the nucleus of an atom, releasing it in an instant to devastating effect.
 
-<image: An iconic image of an atomic bomb casing, like "Little Boy" or "Fat Man">
+<image_0>
+
 
 ## What is an Atomic Bomb?
 
@@ -17,7 +18,8 @@ When the nucleus splits, it releases:
 2.  **Additional neutrons:** These newly released neutrons can then go on to strike other heavy nuclei, perpetuating the process.
 3.  **Fission products:** Lighter, often radioactive, elements.
 
-<mermaid: A sequence diagram illustrating nuclear fission. A neutron strikes a large nucleus (e.g., Uranium-235). The nucleus splits into two smaller nuclei (fission products), releasing energy and 2-3 new neutrons.>
+<mermaid_1>
+
 
 ## The Chain Reaction
 
@@ -25,7 +27,8 @@ The key to the atomic bomb's power lies in the **nuclear chain reaction**. If en
 
 Imagine a single neutron splitting one atom, releasing two more neutrons. These two neutrons then split two more atoms, releasing four neutrons. These four split four more, releasing eight, and so on. This exponential growth in fission events leads to an incredibly rapid and massive release of energy.
 
-<graph: A line graph showing the exponential increase in the number of neutrons over time (or generations) in an uncontrolled nuclear chain reaction. The x-axis represents "Time/Generations" and the y-axis represents "Number of Neutrons". The line should start low and rise steeply.>
+<graph_2>
+
 
 ## Critical Mass
 
@@ -44,7 +47,8 @@ There are two primary designs for atomic bombs, both aimed at achieving a super-
 
 This simpler design was used in the bomb dropped on Hiroshima. It involves firing one sub-critical piece of fissile material into another sub-critical piece, rapidly combining them to form a super-critical mass.
 
-<mermaid: A sequence diagram showing the gun-type atomic bomb mechanism. A conventional explosive propels a "projectile" sub-critical mass of Uranium-235 down a barrel to impact a "target" sub-critical mass of Uranium-235, forming a super-critical mass and initiating fission.>
+<mermaid_3>
+
 
 **Mechanism:**
 1.  A hollow cylinder of Uranium-235 (the "target") is placed at one end of a barrel.
@@ -57,7 +61,8 @@ This simpler design was used in the bomb dropped on Hiroshima. It involves firin
 
 This more complex but more efficient design was used in the bomb dropped on Nagasaki and the Trinity test. It uses conventional explosives to compress a sub-critical sphere of fissile material, increasing its density and thus making it super-critical.
 
-<mermaid: A sequence diagram showing the implosion-type atomic bomb mechanism. A spherical core of Plutonium-239 is surrounded by precisely shaped conventional explosives. These explosives detonate simultaneously, creating an inward-directed shockwave that compresses the Plutonium core to a super-critical density, initiating fission.>
+<mermaid_4>
+
 
 **Mechanism:**
 1.  A sub-critical sphere of Plutonium-239 (or Uranium-235) is placed at the center.
@@ -77,7 +82,8 @@ When an atomic bomb detonates, it releases energy in several forms, leading to c
 4.  **Residual Radiation (Fallout):** The remaining 5% of the energy comes from radioactive fission products and activated materials. These radioactive particles are carried high into the atmosphere by the mushroom cloud and then fall back to Earth, contaminating vast areas and posing long-term health risks.
 5.  **Electromagnetic Pulse (EMP):** A high-altitude nuclear detonation can generate a powerful EMP, which can disrupt or destroy electronic equipment over a wide region.
 
-<image: A classic image of a mushroom cloud rising after a nuclear detonation, symbolizing the destructive power.>
+<image_5>
+
 
 ## Conclusion
 

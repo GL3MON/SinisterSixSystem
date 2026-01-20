@@ -1,32 +1,37 @@
-from langgraph.graph import StateGraph, START, END
-from src.SinisterSixSystems.orchestration.state import AgentState
-from src.SinisterSixSystems.orchestration.router import router_node
-from src.SinisterSixSystems.orchestration.text_agent import text_expert_node
+from SinisterSixSystems.orchestration.orchestrator import Orchestrator
+from SinisterSixSystems.entity import ChatRequest
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from langchain_core.messages import HumanMessage
+from SinisterSixSystems.logging import logger
 
-# 1. Initialize Graph
-workflow = StateGraph(AgentState)
 
-# 2. Add Nodes
-workflow.add_node("router", router_node)
-workflow.add_node("text_expert", text_expert_node)
-workflow.add_node("saver", latex_saver_node)
-# 3. Define Flow
-workflow.add_edge(START, "router")
-workflow.add_edge("router", "text_expert")
-workflow.add_edge("text_expert", "saver")
-workflow.add_edge("saver", END)
-# 4. Compile
-app = workflow.compile()
+app = FastAPI(title="SinisterSix")
 
-# Example Execution
-if __name__ == "__main__":
-    inputs = {"user_input": "Explain how photosynthesis works"}
-    for output in app.stream(inputs):
-        print(output)
+orchestrator = Orchestrator()
+orchestrator_workflow = orchestrator.compile()
 
-# 1. Define a new node function
-def latex_saver_node(state):
-    content = state.get("text_content")
-    if content:
-        save_latex_file(content, filename="lesson_output.tex")
-    return state # No state changes needed, just a side effect
+@app.post("/chat")
+def chat(req: ChatRequest):
+    try:
+        logger.info(f"Received chat request: {req}")
+        if req.document != "":
+            logger.info("Using provided document for context.")
+            response = orchestrator_workflow.invoke({"messages": [HumanMessage(content=req.query)], "document": req.document})
+        else:
+            logger.info("No document provided, proceeding without context.")
+            response = orchestrator_workflow.invoke({"messages": [HumanMessage(content=req.query)], "document": ""})
+        logger.info(f"Generated response: {response['response']}")
+        return {"response": f"./artifacts/processed_files/{req.query[:50]}/"}
+    except Exception as e:
+        logger.error(f"Error processing chat request: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@app.get("/latex_document/")
+def get_latex_document(request: ChatRequest):
+    return {"message": "This endpoint will return the LaTeX document."}
+
+@app.get("/")
+def root():
+    return {"message": "FinConnect Chatbot API is running 🚀"}

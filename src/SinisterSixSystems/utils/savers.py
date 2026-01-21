@@ -13,8 +13,8 @@ def latex_saver_node(state):
     content = state.get("text_content", "")
     filename = sanitize_filename(state["user_input"]) + ".tex"
     filepath = state.get("file_path", "")
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    path = os.path.join(os.path.join(filepath, "/latex/"), filename)
+    os.makedirs(os.path.join(filepath, "latex"), exist_ok=True)
+    path = os.path.join(os.path.join(filepath, "latex"), filename)
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)

@@ -1,0 +1,37 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Early industrial factory scene"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Agricultural revolution innovations"
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Spinning jenny machine"
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "James Watt steam engine"
+    },
+    {
+        "type": "image",
+        "idx": 4,
+        "description": "Victorian era industrial city"
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "Child factory worker"
+    },
+    {
+        "type": "graph",
+        "idx": 6,
+        "description": "Line graph showing the increase in global population from 1700 to 1900, highlighting accelerated growth after 1750."
+    }
+]

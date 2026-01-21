@@ -1,0 +1,27 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "AI brain concept"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Data to insights flow"
+    },
+    {
+        "type": "graph",
+        "idx": 2,
+        "description": "Scatter plot of house size vs. price with a learned regression line"
+    },
+    {
+        "type": "mermaid",
+        "idx": 3,
+        "description": "graph TD\n    A[Machine Learning] --"
+    },
+    {
+        "type": "image",
+        "idx": 4,
+        "description": "Diverse ML applications collage"
+    }
+]

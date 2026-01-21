@@ -1,0 +1,42 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Typical animal cell diagram"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Phospholipid bilayer structure"
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Animal cell nucleus diagram"
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "Mitochondrion internal structure"
+    },
+    {
+        "type": "image",
+        "idx": 4,
+        "description": "Rough and smooth ER"
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "Golgi apparatus diagram"
+    },
+    {
+        "type": "image",
+        "idx": 6,
+        "description": "Centrosome and centrioles"
+    },
+    {
+        "type": "image",
+        "idx": 7,
+        "description": "Cytoskeleton components diagram"
+    }
+]

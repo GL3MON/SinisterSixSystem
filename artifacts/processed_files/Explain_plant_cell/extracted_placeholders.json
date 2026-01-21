@@ -1,0 +1,17 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Labeled diagram of a typical plant cell"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Internal structure of a chloroplast"
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Comparison of plant and animal cells"
+    }
+]

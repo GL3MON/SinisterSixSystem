@@ -1,0 +1,42 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Early philosophical concepts of logic"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Dartmouth AI workshop attendees"
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Metaphorical image of winter landscape"
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "Diagram of an expert system"
+    },
+    {
+        "type": "image",
+        "idx": 4,
+        "description": "Data points and decision boundary"
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "Multi-layered neural network diagram"
+    },
+    {
+        "type": "graph",
+        "idx": 6,
+        "description": "Line graph showing the decrease in ImageNet Large Scale Visual Recognition Challenge (ILSVRC) error rate from 2010 to 2017, highlighting the significant drop after the introduction of deep learning models like AlexNet, VGG, ResNet."
+    },
+    {
+        "type": "image",
+        "idx": 7,
+        "description": "Futuristic AI interface concept"
+    }
+]

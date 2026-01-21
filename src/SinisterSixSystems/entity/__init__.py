@@ -8,3 +8,6 @@ class ChatRequest(BaseModel):
 class AudioRequest(BaseModel):
     mode: str
     query: str
+
+class VideoRequest(BaseModel):
+    query: str

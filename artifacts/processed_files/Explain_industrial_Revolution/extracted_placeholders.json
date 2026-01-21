@@ -1,0 +1,22 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Steam engine factory illustration"
+    },
+    {
+        "type": "graph",
+        "idx": 1,
+        "description": "A line graph showing population growth in Great Britain from 1700 to 1850, indicating a significant increase starting in the late 18th century."
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Early textile factory interior with machinery"
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "Early steam locomotive on tracks"
+    }
+]

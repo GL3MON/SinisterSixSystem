@@ -5,7 +5,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import START, END, StateGraph
 from langchain.agents import create_agent
 from langchain.tools import tool
-
+from bing_image_downloader import downloader
+import shutil
 
 from SinisterSixSystems.orchestration.graph_generator import GraphGenerator
 from SinisterSixSystems.orchestration.audio_agent import AudioAgent
@@ -89,87 +90,74 @@ class Orchestrator:
     @staticmethod
     def image_generation_tool(description: str, query: str, placeholder_idx: int) -> str:
         """
-        Generates an image based on the provided description.
+        Generates an image using Bing Image Downloader.
         Args:
-            description (str): The description for image generation.
+            description (str): The description for image search.
+            query (str): User query (used for folder naming).
+            placeholder_idx (int): Index for deterministic image naming.
         Returns:
-            str: Status message indicating completion of image generation.
+            str: Status message indicating completion.
         """
-        # Placeholder for image generation logic
-        ROOT_DIR = f"./artifacts/processed_files/{sanitze_filename(query)}/"
 
-        logger.info(f"Image generation invoked with description: {description[:200]}")
-        
-        headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-        }
+        ROOT_DIR = f"./artifacts/processed_files/{sanitze_filename(query)}"
+        IMAGES_DIR = os.path.join(ROOT_DIR, "images")
+        TEMP_DIR = os.path.join(ROOT_DIR, "_bing_tmp")
 
-        search_url = "https://www.googleapis.com/customsearch/v1"
-        params = {
-            'q': description,
-            'cx': os.getenv("GOOGLE_CSE_ID"),
-            'key': os.getenv("GOOGLE_API_KEY"),
-            'searchType': 'image',
-            'num': 7,
-            'safe': 'off'
-        }
+        os.makedirs(IMAGES_DIR, exist_ok=True)
+        os.makedirs(TEMP_DIR, exist_ok=True)
+
+        logger.info(f"Bing image generation invoked with description: {description[:200]}")
 
         try:
-            search_res = requests.get(search_url, headers=headers, params=params).json()
-            logger.info(f"Search results: {json.dumps(search_res)[:500]}")
+            downloader.download(
+                description,
+                limit=7,
+                output_dir=TEMP_DIR,
+                adult_filter_off=True,
+                force_replace=False,
+                timeout=60,
+                verbose=False
+            )
 
-            # import random
-            
-            # random_idx = random.randint(0, len(search_res.get("items", [])) - 1) if "items" in search_res else 0
-            
-            if "items" not in search_res:
-                logger.error(f"No image results found for query: {description[:100]}")
+            query_folder = os.path.join(TEMP_DIR, description)
+            if not os.path.exists(query_folder):
+                logger.error("No images downloaded from Bing.")
                 return "Image generation failed: No results found."
-            
-            for idx, item in enumerate(search_res["items"]):
-                
-                # if idx != random_idx:
-                #     continue
+
+            for file in os.listdir(query_folder):
+                file_path = os.path.join(query_folder, file)
+
                 try:
-                    image_url = item["link"]
-                    logger.info(f"Downloading image from URL: {image_url}")
-                    
-                    image_response = requests.get(image_url, headers=headers, timeout=10, stream=True)
+                    with open(file_path, "rb") as f:
+                        img_bytes = f.read()
 
-                    content_type = image_response.headers.get('Content-Type', '')
-                    if 'image' not in content_type:
-                        logger.warning(f"URL did not return an image: {image_url}")
-                        continue
-                    
-                    img_bytes = image_response.content
+                    img = Image.open(io.BytesIO(img_bytes))
+                    img.verify()
 
-                    try:
-                        img = Image.open(io.BytesIO(img_bytes))
-                        img.verify()
-                        os.makedirs(os.path.join(ROOT_DIR, "images"), exist_ok=True)
-                        ext = ".png"
-                        final_filename = os.path.join(os.path.join(ROOT_DIR, "images"), f"image_{placeholder_idx}{ext}")
+                    final_path = os.path.join(
+                        IMAGES_DIR,
+                        f"image_{placeholder_idx}.png"
+                    )
 
-                        with open(final_filename, "wb") as f:
-                            f.write(img_bytes)
-                        
-                        return f"Image saved to {final_filename}"
+                    with open(final_path, "wb") as f:
+                        f.write(img_bytes)
 
-                    except Exception:
-                        logger.warning(f"Downloaded file is not a valid image: {image_url}")
-                        continue
-                    
-                except Exception as e:
-                    logger.error(f"Error downloading image from {image_url}: {e}")
+                    logger.info(f"Image saved to {final_path}")
+
+                    shutil.rmtree(TEMP_DIR, ignore_errors=True)
+                    return f"Image saved to {final_path}"
+
+                except Exception:
+                    logger.warning(f"Invalid image file skipped: {file}")
                     continue
-        
+
+            shutil.rmtree(TEMP_DIR, ignore_errors=True)
+            return "Image generation failed: No valid images."
+
         except Exception as e:
-            logger.error(f"Error during image search: {e}")
+            logger.error(f"Bing image download error: {e}")
+            shutil.rmtree(TEMP_DIR, ignore_errors=True)
             return "Image generation failed due to an error."
-                    
-
-
-
 
     @staticmethod
     @tool
@@ -401,9 +389,9 @@ if __name__ == "__main__":
 
     initial_state = {
             "messages": [
-                HumanMessage(content="Explain photosynthesis in detail."),
+                HumanMessage(content="Explain steam engines with relevant graphs and images." ),
             ],
-            "document": "/mnt/2028B41628B3E944/Projects/SinisterSixSystem/artifacts/test_pdfs/Lesson-11.pdf",
+            "document": "",
     }
 
     for output in compiled_workflow.stream(initial_state):

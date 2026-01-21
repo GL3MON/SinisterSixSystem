@@ -8,12 +8,12 @@ def pdf_compiler_node(state):
     """
     print("📍 [DEBUG] Entered PDF Compiler Node")
     filepath = state.get("file_path")
-    
+    tex_path = os.path.join(filepath, f"latex/{sanitize_filename(state['user_input'])}.tex")
+
     if not tex_path:
         print("❌ Error: No file_path found in state.")
         return state
         
-    tex_path = os.path.join(filepath, f"latex/{sanitize_filename(state['user_input'])}.tex")
     pdf_path = compile_latex_to_pdf(state, filepath)
     return {**state, "pdf_path": pdf_path}
 

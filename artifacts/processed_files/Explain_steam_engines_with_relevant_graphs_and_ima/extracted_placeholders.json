@@ -1,0 +1,32 @@
+[
+    {
+        "type": "image",
+        "idx": 0,
+        "description": "Historic steam engine"
+    },
+    {
+        "type": "image",
+        "idx": 1,
+        "description": "Basic steam engine principle"
+    },
+    {
+        "type": "image",
+        "idx": 2,
+        "description": "Labeled steam engine components"
+    },
+    {
+        "type": "image",
+        "idx": 3,
+        "description": "Steam engine piston cycle"
+    },
+    {
+        "type": "graph",
+        "idx": 4,
+        "description": "Pressure-Volume (P-V) diagram for an ideal reciprocating steam engine cycle. The diagram should show four distinct phases: 1) Steam admission at constant pressure (horizontal line, increasing volume), 2) Isentropic expansion (curved line, decreasing pressure, increasing volume), 3) Exhaust at constant pressure (horizontal line, decreasing volume), and 4) Isentropic compression (curved line, increasing pressure, decreasing volume). Label the axes as Pressure (P) and Volume (V). Clearly indicate the direction of the cycle (clockwise) and highlight the area representing the net work done per cycle."
+    },
+    {
+        "type": "image",
+        "idx": 5,
+        "description": "Steam locomotive in action"
+    }
+]
